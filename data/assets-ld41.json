@@ -1,0 +1,31 @@
+{
+	"$schema": "file:///Users/arthur/Sites/sdtx/stardazed/schemas/assets-01.json#",
+	"schema-version": 1,
+	"author": "Arthur Langereis (@zenmumbler)",
+	"project": "Untitled (LD41)",
+
+	"assets": [
+		{
+			"kind": "model",
+			"name": "level",
+			"dependencies": {
+				"mesh": {
+					"generator": "mesh",
+					"metadata": {
+						"shape": "box",
+						"extents": [3, 0.1, 3]
+					}
+				},
+				"mat0": {
+					"kind": "material",
+					"metadata": {
+						"colour": {
+							"type": "diffuse",
+							"baseColour": [1.0, 0, 0]
+						}
+					}
+				}
+			}
+		}
+	]
+}
