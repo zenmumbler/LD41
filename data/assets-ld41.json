@@ -13,7 +13,7 @@
 					"generator": "mesh",
 					"metadata": {
 						"shape": "box",
-						"extents": [3, 0.1, 3]
+						"extents": [3, 3, 3]
 					}
 				},
 				"mat0": {

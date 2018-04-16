@@ -76,7 +76,7 @@ class MainScene implements sd.SceneDelegate {
 
 		makeEntity(scene, {
 			transform: {
-				position: [0, -3, 0]
+				position: [0, -4, 0]
 			},
 			geom: levelModel.geom,
 			renderer: {
@@ -90,7 +90,7 @@ class MainScene implements sd.SceneDelegate {
 		});
 
 		// ----- PLAYER
-		this.player = new PlayerController(dom.$1("canvas"), [0, 1.1, 3], scene, this.sound);
+		this.player = new PlayerController(dom.$1("canvas"), [0, 1.1, 0], scene, this.sound);
 		this.gameState.listen(this.player);
 
 		// ----- Interactables
