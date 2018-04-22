@@ -1,0 +1,73 @@
+Ok, so combining 2 things I generally loathe, pinball and crafting.
+Death to this theme.
+
+PINCRAFT
+========
+
+Simple pinball table based on a very old board, in sources.
+Nothing overly special about it.
+The bumpers, instead of score, hand out crafting materials.
+
+What can we craft?
+------------------
+
+- additional bumpers for different materials
+	- you start with just 1 bumper / material
+	- this is kind of like a clicker game, but then with pinball
+		- I really hate clicking games, buddha this f'ing theme
+- death shield in the bottom
+- extra ball / life
+- multi-ball
+	- essentially, the bonuses you would get normally through
+	  play have to be crafted. If I make this grindy I could
+	  add lootboxes to have the mother of all horrors, THIS THEME
+
+What is the goal of the game?
+-----------------------------
+
+- normally, goal of pinball is just Stayin' Alive, ah ah ahhh.
+- and get a high score
+	- OK, I said no score but in addition to materials let's
+	  award points.
+- simple server to record scores?
+	- some basic punkbuster tech
+	- record all actions and send those as payload i/o score
+	- not too worried about 3733T H@><0RZ
+- if I have more time (HAH) I can always add something else.
+- crafting materials needed for player bonuses increase over time?
+	- levelling?
+
+Assets
+------
+
+- the board, bunch of models for borders
+	- ratio: 1 wide by 2 deep
+	- bg texture: 512 by 1024
+	- angle of table between 3.5 and 7 degrees
+		- old tables used 3.5
+		- newer 6.5 to 7, because economics
+- whole bunch of non-mesh colliders, mostly spheres and boxes
+  for both efficiency and accuracy
+- ball with metal material
+	- ball is 27mm diameter and weighs 80 grams
+	- entry tube 30mm wide?
+- everything should have very small friction
+- flippers
+- bumpers
+
+- camera looks down, sees entire board at -45ish degree angle
+	- does not move
+	- board on left side of screen
+- craft UI is HTML
+	- right side of screen
+	- some styles buttons and other elements
+	- maybe some fancy CSS animations, ooh
+	- make sure button downs don't block UI or something
+
+Worries
+-------
+
+- flippers: need some kind of joint / movement restriction
+- bumpers, react with force on ball
+- make sure ball doesn't get stuck due to friction or something
+	- add tilt control
