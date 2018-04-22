@@ -6,26 +6,9 @@
 
 	"assets": [
 		{
+			"name": "board",
 			"kind": "model",
-			"name": "level",
-			"dependencies": {
-				"mesh": {
-					"generator": "mesh",
-					"metadata": {
-						"shape": "box",
-						"extents": [3, 3, 3]
-					}
-				},
-				"mat0": {
-					"kind": "material",
-					"metadata": {
-						"colour": {
-							"type": "diffuse",
-							"baseColour": [1.0, 0, 0]
-						}
-					}
-				}
-			}
+			"uri": "data/board-v1.obj"
 		}
 	]
 }
