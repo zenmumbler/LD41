@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>Untitled - a Ludum Dare 41 Entry by @zenmumbler</title>
+	<title>PinCraft - a Ludum Dare 41 Entry by @zenmumbler</title>
 	<style>
 		body {
 			margin: 0;
@@ -20,21 +20,10 @@
 			margin: 50px auto 0 auto;
 			position: relative;
 			overflow: hidden;
-		}
 
-		.stageholder.small {
-			width: 960px;
-			height: 540px;
-		}
-
-		.stageholder.hdready {
-			width: 1024px;
-			height: 576px;
-		}
-
-		.stageholder.fullhd {
-			width: 1920px;
-			height: 1080px;
+			width: 512px;
+			height: 768px;
+			border: 1px solid green;
 		}
 
 		#stage {
@@ -43,76 +32,11 @@
 		}
 
 		.overlay {
-			font-family: Anaheim, Helvetica, serif;
 			position: absolute;
 			z-index: 4;
 			width: 100%;
 			height: 100%;
 			display: none;
-			font-size: 22px;
-		}
-
-		.titles {
-			background-color: rgba(0, 0, 0, .5);
-		}
-
-		.titles img {
-			position: absolute;
-			left: 340px;
-			top: 120px;
-			opacity: 1;
-			transition: opacity 2s ease-in;
-		}
-
-		.titles h1 {
-			color: white;
-			font-family: inherit;
-			font-size: 48;
-			font-weight: normal;
-			position: absolute;
-			top: 150px;
-			width: 100%;
-			text-align: center;
-		}
-
-		.titles p.info {
-			position: absolute;
-			top: 260px;
-			width: 100%;
-			text-align: center;
-		}
-		.titles p.hajime {
-			position: absolute;
-			top: 320px;
-			width: 100%;
-			text-align: center;
-		}
-
-
-		p.thx {
-			top: 400px;
-		}
-
-		.right {
-			position: absolute;
-			right: 150px;
-			top: 50px;
-		}
-
-		.start {
-			margin-top: 50px;
-		}
-
-		.messages p {
-			position: absolute;
-			text-align: center;
-			left: 0;
-			right: 0;
-			top: 60%;
-			color: white;
-			font-size: 26px;
-			text-shadow: 0 0 3px rgb(60, 5, 92);
-			line-height: 1.4;
 		}
 
 		.bar {
@@ -131,25 +55,6 @@
 			width: 0;
 		}
 
-		.butan {
-			display: inline-block;
-			width: 100px;
-			padding: 10px;
-			border: 1px solid white;
-			text-align: center;
-			cursor: pointer;
-		}
-
-		.butan.pres {
-			color: black;
-			background: white;
-		}
-
-		.butan.begin {
-			width: 300px;
-			font-size: 36px;
-		}
-
 		.info {
 			font-size: 14px;
 			color: #888;
@@ -161,51 +66,6 @@
 			padding: 0;
 		}
 
-		.controls {
-			text-align: center;
-			padding-top: 20px;
-			color: #555;
-			font-size: 12px;
-		}
-
-		.controls button {
-			border: 1px solid #555;
-			color: #555;
-			background: black;
-			border-radius: 4px;
-		}
-
-		.controls:hover {
-			color: #aaa;
-		}
-
-		.controls:hover button {
-			border: 1px solid #aaa;
-			color: #aaa;
-
-		}
-
-		.controls label,
-		.controls input,
-		.controls button {
-			cursor: pointer;
-		}
-
-		.controls input[disabled],
-		.controls input[disabled]+label {
-			color: #555;
-			cursor: default;
-		}
-
-		.controls button:hover {
-			color: white;
-		}
-
-		.controls button:active {
-			background: #aaa;
-			color: #333;
-		}
-
 		a,
 		a:visited,
 		a:active {
@@ -215,29 +75,12 @@
 </head>
 
 <body>
-	<div class="stageholder hdready">
+	<div class="stageholder">
 		<div class="overlay loading">
 			<div class="bar">
 				<div class="progress"></div>
 			</div>
 		</div>
-		<div class="overlay titles">
-			<h1>Untitled</h1>
-			<p class="info">for Ludum Dare 41 by Arthur Langereis — @zenmumbler</p>
-			<p class="hajime">
-				<button class="butan begin" onclick="sd.App.scene.delegate.begin()">Begin</button>
-			</p>
-		</div>
-		<div class="overlay messages">
-			<p></p>
-		</div>
-	</div>
-	<div class="controls">
-		Keyboard Type:
-		<input type="radio" name="keymap" data-km="qwerty" id="km-qwerty" checked>
-		<label for="km-qwerty">QWERTY</label>
-		<input type="radio" name="keymap" data-km="azerty" id="km-azerty">
-		<label for="km-azerty">AZERTY</label>
 	</div>
 
 	<script src="../stardazed/ext/veclib.js"></script>
