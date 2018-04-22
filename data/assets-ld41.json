@@ -7,8 +7,7 @@
 	"assets": [
 		{
 			"name": "board",
-			"kind": "model",
-			"uri": "data/board-v1.obj"
+			"uri": "data/board-v2.obj"
 		}
 	]
 }
