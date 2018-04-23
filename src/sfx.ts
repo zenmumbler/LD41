@@ -1,6 +1,8 @@
 const enum SFX {
-	FootStep,
-	Thing
+	Launch,
+	Flipper,
+	Bumper,
+	Die
 }
 
 const enum Music {
@@ -9,34 +11,34 @@ const enum Music {
 }
 
 interface SoundAssets {
-	steps: AudioBuffer[];
 	music: AudioBuffer;
-	thing: AudioBuffer;
+	launch: AudioBuffer;
+	flipper: AudioBuffer;
+	bumper: AudioBuffer;
+	die: AudioBuffer;
 }
 
 class Sound {
 	private assets_: SoundAssets;
 	private ctx: AudioContext;
 
-	private stepGain: GainNode;
+	private plonkGain: GainNode;
 	private musicGain: GainNode;
 	private effectGain: GainNode;
 
-	private stepSource: AudioBufferSourceNode | null = null;
+	private plonkSource: AudioBufferSourceNode | null = null;
 	private musicSource: AudioBufferSourceNode | null = null;
 	private effectSource: AudioBufferSourceNode | null = null;
-
-	private stepToggle = 0;
 
 	constructor(private ad: audio.AudioDevice, assets: SoundAssets) {
 		const ctx = this.ctx = ad.ctx;
 		this.assets_ = assets;
 
-		this.stepGain = ctx.createGain();
+		this.plonkGain = ctx.createGain();
 		this.musicGain = ctx.createGain();
 		this.effectGain = ctx.createGain();
 
-		this.stepGain.connect(ctx.destination);
+		this.plonkGain.connect(ctx.destination);
 		this.musicGain.connect(ctx.destination);
 		this.effectGain.connect(ctx.destination);
 	}
@@ -73,9 +75,15 @@ class Sound {
 		let volume = 0;
 		let rate: number | null = null;
 
+		const randomTranspose = (notes: number) => {
+			return 1.0 + (-notes + math.intRandomRange(0, notes * 2)) / 12;
+		};
+
 		switch (what) {
-			case SFX.FootStep: buffer = assets.steps[this.stepToggle]; source = this.stepSource; gain = this.stepGain; volume = 1; rate = 1; this.stepToggle ^= 1; break;
-			case SFX.Thing: buffer = assets.thing; source = this.effectSource; gain = this.effectGain; volume = 1.0; rate = 1.0; break;
+			case SFX.Launch: buffer = assets.launch; source = this.effectSource; gain = this.effectGain; volume = 1.0; rate = 1.0; break;
+			case SFX.Flipper: buffer = assets.flipper; source = this.plonkSource; gain = this.plonkGain; volume = 1.0; rate = 1.0; break;
+			case SFX.Bumper: buffer = assets.bumper; source = this.plonkSource; gain = this.plonkGain; volume = 1.0; rate = randomTranspose(2); break;
+			case SFX.Die: buffer = assets.die; source = this.effectSource; gain = this.effectGain; volume = 0.8; rate = 1.0; break;
 
 			default: buffer = null;
 		}
@@ -96,8 +104,8 @@ class Sound {
 		bufferSource.start(0);
 		gain.gain.value = volume;
 
-		if (what === SFX.FootStep) {
-			this.stepSource = bufferSource;
+		if (what === SFX.Flipper || what === SFX.Bumper) {
+			this.plonkSource = bufferSource;
 		}
 		else {
 			this.effectSource = bufferSource;
@@ -107,8 +115,8 @@ class Sound {
 			if (this.effectSource === bufferSource) {
 				this.effectSource = null;
 			}
-			else if (this.stepSource === bufferSource) {
-				this.stepSource = null;
+			else if (this.plonkSource === bufferSource) {
+				this.plonkSource = null;
 			}
 
 			bufferSource!.disconnect();
