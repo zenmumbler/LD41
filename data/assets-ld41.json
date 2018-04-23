@@ -2,12 +2,28 @@
 	"$schema": "file:///Users/arthur/Sites/sdtx/stardazed/schemas/assets-01.json#",
 	"schema-version": 1,
 	"author": "Arthur Langereis (@zenmumbler)",
-	"project": "Untitled (LD41)",
+	"project": "PinCraft (LD41)",
 
 	"assets": [
 		{
 			"name": "board",
 			"uri": "data/board-v4.obj"
+		},
+		{
+			"name": "launch",
+			"uri": "data/launch.mp3"
+		},
+		{
+			"name": "flipper",
+			"uri": "data/flipper.mp3"
+		},
+		{
+			"name": "bumper",
+			"uri": "data/bumper.mp3"
+		},
+		{
+			"name": "die",
+			"uri": "data/die.mp3"
 		}
 	]
 }
