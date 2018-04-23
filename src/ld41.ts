@@ -17,8 +17,10 @@ class MainScene implements sd.SceneDelegate {
 	framers: Updateable[] = [];
 	board!: EntityInfo;
 	ball!: EntityInfo;
-	paddleRight!: EntityInfo;
+	paddleLeft!: EntityInfo;
+	hingeLeft!: Ammo.btHingeConstraint;
 	hingeRight!: Ammo.btHingeConstraint;
+	paddleRight!: EntityInfo;
 	end = false;
 
 	willLoadAssets() {
@@ -53,7 +55,7 @@ class MainScene implements sd.SceneDelegate {
 			thing: cache("audio", "thing"),
 		});
 
-		scene.camera.perspective(60, 0.1, 100);
+		scene.camera.perspective(60, 0.1, 10);
 
 		// --------- LEVEL GEOMETRY
 		const levelModel = cache("model", "board");
@@ -153,43 +155,72 @@ class MainScene implements sd.SceneDelegate {
 			}
 		});
 
-		// PADDLE
 
-		this.paddleRight = makeEntity(scene, {
+		// PADDLES
+
+		const paddleW = .08;
+		const paddleWHalf = paddleW / 2;
+		const paddleMass = 0.2;
+		const paddleMaterial = makePBRMat(scene, asset.makeStandardMaterial({
+			type: "diffuse",
+			baseColour: [.7, .7, 0]
+		}));
+
+		this.paddleLeft = makeEntity(scene, {
+			parent: this.board.transform,
 			transform: {
-				position: [0, .0135, .2],
-				rotation: quat.fromEuler(0, math.deg2rad(15), math.deg2rad(-4.5))
+				position: [0.08, .0135, .15],
 			},
 			rigidBody: {
-				mass: 0.03,
+				mass: paddleMass,
 				friction: 0.0,
-				restitution: 0.5,
-				// positionConstraints: [true, true, true],
-				// rotationConstraints: [true, false, true],
+				restitution: 0.7,
 				isScripted: true,
-				// isKinematic: true,
 				shape: physics.makeShape({
 					type: physics.PhysicsShapeType.Box,
-					halfExtents: [0.03, 0.01, 0.008]
+					halfExtents: [paddleWHalf, 0.01, 0.008]
 				})!
 			},
-			geom: geometry.gen.generate(new geometry.gen.Box({ width: .06, height: .02, depth: .016 })),
+			geom: geometry.gen.generate(new geometry.gen.Box({ width: paddleW, height: .02, depth: .016 })),
 			renderer: {
-				materials: [makePBRMat(scene, asset.makeStandardMaterial({
-					type: "diffuse",
-					baseColour: [.7, .7, 0]
-				}))]
+				materials: [paddleMaterial]
 			}
 		});
 
-		const paddleBody = scene.colliders.rigidBody(this.paddleRight.collider);
-		// paddleBody.setGravity(new Ammo.btVector3(0, 0, 0));
-		const hinge = new Ammo.btHingeConstraint(paddleBody, new Ammo.btVector3(-0.02, 0, 0), new Ammo.btVector3(0, 1, 0));
-		// const hinge = new Ammo.btHingeConstraint(paddleBody, floorBody, new Ammo.btVector3(-0.02, 0, 0), new Ammo.btVector3(0, 0, 0), new Ammo.btVector3(0, 1, 0), new Ammo.btVector3(0, 1, 0), false);
-		// hinge.setAngularOnly(true);
-		hinge.setLimit(0, math.deg2rad(30), 0.0, 0.5, 0.0);
-		scene.physicsWorld.addConstraint(hinge);
-		this.hingeRight = hinge;
+		const paddleBodyLeft = scene.colliders.rigidBody(this.paddleLeft.collider);
+		const hingeLeft = new Ammo.btHingeConstraint(paddleBodyLeft, new Ammo.btVector3(0.035, 0, 0), new Ammo.btVector3(0, 1, 0));
+		hingeLeft.setLimit(math.deg2rad(-30), math.deg2rad(30), 0.0, 0.5, 0.0);
+		scene.physicsWorld.addConstraint(hingeLeft);
+		this.hingeLeft = hingeLeft;
+
+
+		this.paddleRight = makeEntity(scene, {
+			parent: this.board.transform,
+			transform: {
+				position: [-0.03, .0135, .15],
+			},
+			rigidBody: {
+				mass: paddleMass,
+				friction: 0.0,
+				restitution: 0.7,
+				isScripted: true,
+				shape: physics.makeShape({
+					type: physics.PhysicsShapeType.Box,
+					halfExtents: [paddleWHalf, 0.01, 0.008]
+				})!
+			},
+			geom: geometry.gen.generate(new geometry.gen.Box({ width: paddleW, height: .02, depth: .016 })),
+			renderer: {
+				materials: [paddleMaterial]
+			}
+		});
+
+		const paddleBodyRight = scene.colliders.rigidBody(this.paddleRight.collider);
+		const hingeRight = new Ammo.btHingeConstraint(paddleBodyRight, new Ammo.btVector3(-0.035, 0, 0), new Ammo.btVector3(0, 1, 0));
+		hingeRight.setLimit(math.deg2rad(-30), math.deg2rad(30), 0.0, 0.5, 0.0);
+		scene.physicsWorld.addConstraint(hingeRight);
+		this.hingeRight = hingeRight;
+
 
 		// ---- LIGHTS
 		makeEntity(scene, {
@@ -224,9 +255,11 @@ class MainScene implements sd.SceneDelegate {
 	begin() {
 	}
 
+	camPos = [0, .85, .15];
+
 	update(timeStep: number) {
 		const scene = this.scene;
-		scene.camera.lookAt([0, .85, .15], [0, 0, .40], [0, 0, 1]);
+		scene.camera.lookAt(this.camPos, [0, 0, .40], [0, 0, 1]);
 
 		// scene.transforms.rotateByAngles(this.board.transform, [0, math.deg2rad(.1), 0]);
 
@@ -239,16 +272,17 @@ class MainScene implements sd.SceneDelegate {
 			scene.colliders.rigidBody(this.ball.collider).applyCentralForce(new Ammo.btVector3(0, 0, 6.5));
 		}
 
-		const rightDown = control.keyboard.down(control.Key.RIGHT);
-		this.hingeRight.setMotorTarget(+rightDown * math.deg2rad(30), timeStep * 2);
-		this.hingeRight.enableMotor(rightDown);
-		// this.hingeRight.enableAngularMotor(control.keyboard.down(control.Key.RIGHT), 10, 10);
-		if (control.keyboard.down(control.Key.RIGHT)) {
-			scene.colliders.rigidBody(this.paddleRight.collider).applyForce(new Ammo.btVector3(0, 0, 0.2), new Ammo.btVector3(0.02, 0, 0));
-			// scene.colliders.rigidBody(this.paddleRight.collider).setAngularVelocity(new Ammo.btVector3(0.1, 0, 0));
+		if (control.keyboard.down(control.Key.LEFT)) {
+			this.hingeLeft.enableAngularMotor(true, 15, 30);
 		}
 		else {
-			// scene.colliders.rigidBody(this.paddleRight.collider).setAngularVelocity(new Ammo.btVector3(-0.1, 0, 0));
+			this.hingeLeft.enableMotor(false);
+		}
+		if (control.keyboard.down(control.Key.RIGHT)) {
+			this.hingeRight.enableAngularMotor(true, -15, 30);
+		}
+		else {
+			this.hingeRight.enableMotor(false);
 		}
 	}
 }

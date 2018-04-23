@@ -68,6 +68,7 @@ Worries
 -------
 
 - flippers: need some kind of joint / movement restriction
+	>>>>>>> I KNEW IT, TOOK MANY HOURS OF MY LIFE,... anyway, works
 - bumpers, react with force on ball
 - make sure ball doesn't get stuck due to friction or something
 	- add tilt control
