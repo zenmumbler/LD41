@@ -158,28 +158,30 @@ class MainScene implements sd.SceneDelegate {
 
 		// PADDLES
 
-		const paddleW = .08;
+		const paddleW = .1;
 		const paddleWHalf = paddleW / 2;
+		const paddlePivot = 0.00;
 		const paddleMass = 0.2;
 		const paddleMaterial = makePBRMat(scene, asset.makeStandardMaterial({
 			type: "diffuse",
 			baseColour: [.7, .7, 0]
 		}));
+		const paddleShape = physics.makeShape({
+			type: physics.PhysicsShapeType.Box,
+			halfExtents: [paddleWHalf, 0.01, 0.008]
+		})!;
 
 		this.paddleLeft = makeEntity(scene, {
 			parent: this.board.transform,
 			transform: {
-				position: [0.08, .0135, .15],
+				position: [0.09, .0135, .17],
 			},
 			rigidBody: {
 				mass: paddleMass,
 				friction: 0.0,
 				restitution: 0.7,
 				isScripted: true,
-				shape: physics.makeShape({
-					type: physics.PhysicsShapeType.Box,
-					halfExtents: [paddleWHalf, 0.01, 0.008]
-				})!
+				shape: paddleShape
 			},
 			geom: geometry.gen.generate(new geometry.gen.Box({ width: paddleW, height: .02, depth: .016 })),
 			renderer: {
@@ -188,7 +190,7 @@ class MainScene implements sd.SceneDelegate {
 		});
 
 		const paddleBodyLeft = scene.colliders.rigidBody(this.paddleLeft.collider);
-		const hingeLeft = new Ammo.btHingeConstraint(paddleBodyLeft, new Ammo.btVector3(0.035, 0, 0), new Ammo.btVector3(0, 1, 0));
+		const hingeLeft = new Ammo.btHingeConstraint(paddleBodyLeft, new Ammo.btVector3(paddleWHalf - paddlePivot, 0, 0.008), new Ammo.btVector3(0, 1, 0));
 		hingeLeft.setLimit(math.deg2rad(-30), math.deg2rad(30), 0.0, 0.5, 0.0);
 		scene.physicsWorld.addConstraint(hingeLeft);
 		this.hingeLeft = hingeLeft;
@@ -197,17 +199,14 @@ class MainScene implements sd.SceneDelegate {
 		this.paddleRight = makeEntity(scene, {
 			parent: this.board.transform,
 			transform: {
-				position: [-0.03, .0135, .15],
+				position: [-0.05, .0135, .17],
 			},
 			rigidBody: {
 				mass: paddleMass,
 				friction: 0.0,
 				restitution: 0.7,
 				isScripted: true,
-				shape: physics.makeShape({
-					type: physics.PhysicsShapeType.Box,
-					halfExtents: [paddleWHalf, 0.01, 0.008]
-				})!
+				shape: paddleShape
 			},
 			geom: geometry.gen.generate(new geometry.gen.Box({ width: paddleW, height: .02, depth: .016 })),
 			renderer: {
@@ -216,7 +215,7 @@ class MainScene implements sd.SceneDelegate {
 		});
 
 		const paddleBodyRight = scene.colliders.rigidBody(this.paddleRight.collider);
-		const hingeRight = new Ammo.btHingeConstraint(paddleBodyRight, new Ammo.btVector3(-0.035, 0, 0), new Ammo.btVector3(0, 1, 0));
+		const hingeRight = new Ammo.btHingeConstraint(paddleBodyRight, new Ammo.btVector3(-(paddleWHalf - paddlePivot), 0, 0.008), new Ammo.btVector3(0, 1, 0));
 		hingeRight.setLimit(math.deg2rad(-30), math.deg2rad(30), 0.0, 0.5, 0.0);
 		scene.physicsWorld.addConstraint(hingeRight);
 		this.hingeRight = hingeRight;
@@ -255,13 +254,9 @@ class MainScene implements sd.SceneDelegate {
 	begin() {
 	}
 
-	camPos = [0, .85, .15];
-
 	update(timeStep: number) {
 		const scene = this.scene;
-		scene.camera.lookAt(this.camPos, [0, 0, .40], [0, 0, 1]);
-
-		// scene.transforms.rotateByAngles(this.board.transform, [0, math.deg2rad(.1), 0]);
+		scene.camera.lookAt([0, .85, .15], [0, 0, .40], [0, 0, 1]);
 
 		// send update event to those interested
 		for (const ua of this.framers) {
@@ -272,17 +267,21 @@ class MainScene implements sd.SceneDelegate {
 			scene.colliders.rigidBody(this.ball.collider).applyCentralForce(new Ammo.btVector3(0, 0, 6.5));
 		}
 
-		if (control.keyboard.down(control.Key.LEFT)) {
-			this.hingeLeft.enableAngularMotor(true, 15, 30);
+		const upImpulse = 45;
+		const upSpeed = 22;
+		const downImpulse = 20;
+		const downSpeed = 10;
+		if (control.keyboard.pressed(control.Key.LEFT)) {
+			this.hingeLeft.enableAngularMotor(true, upSpeed, upImpulse);
 		}
-		else {
-			this.hingeLeft.enableMotor(false);
+		else if (control.keyboard.released(control.Key.LEFT)) {
+			this.hingeLeft.enableAngularMotor(true, -downSpeed, downImpulse);
 		}
-		if (control.keyboard.down(control.Key.RIGHT)) {
-			this.hingeRight.enableAngularMotor(true, -15, 30);
+		if (control.keyboard.pressed(control.Key.RIGHT)) {
+			this.hingeRight.enableAngularMotor(true, -upSpeed, upImpulse);
 		}
-		else {
-			this.hingeRight.enableMotor(false);
+		else if (control.keyboard.released(control.Key.RIGHT)) {
+			this.hingeRight.enableAngularMotor(true, downSpeed, downImpulse);
 		}
 	}
 }
