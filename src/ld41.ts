@@ -10,6 +10,7 @@ interface BumperInfo {
 	x: number;
 	z: number;
 	radius: number;
+	points: number;
 	colour: [number, number, number];
 }
 
@@ -29,6 +30,11 @@ class MainScene implements sd.SceneDelegate {
 	paddleRight!: EntityInfo;
 	hingeLeft!: Ammo.btHingeConstraint;
 	hingeRight!: Ammo.btHingeConstraint;
+
+	score = 0;
+	scoreT0 = 0;
+	scoreSN = new SmoothNum(0, 300);
+	deaths = 0;
 
 	willLoadAssets() {
 		dom.show(".overlay.loading");
@@ -235,36 +241,42 @@ class MainScene implements sd.SceneDelegate {
 				z: 0.70,
 				radius: .043,
 				colour: [1, .5, 0],
+				points: 1000
 			},
 			{
 				x: 0.02,
 				z: 0.55,
 				radius: .033,
 				colour: [0, 1, 0],
+				points: 500
 			},
 			{
 				x: -0.08,
 				z: 0.46,
 				radius: .033,
 				colour: [1, 1, 0],
+				points: 100
 			},
 			{
 				x: 0.12,
 				z: 0.46,
 				radius: .033,
 				colour: [1, 1, 0],
+				points: 100
 			},
 			{
 				x: 0.242,
 				z: 0.585,
 				radius: .033,
 				colour: [.7, 0, 0],
+				points: 250
 			},
 			{
 				x: -0.202,
 				z: 0.585,
 				radius: .033,
 				colour: [.7, 0, 0],
+				points: 250
 			},
 		];
 
@@ -355,12 +367,23 @@ class MainScene implements sd.SceneDelegate {
 							vec3.scale(outward, outward, 2); // how hard to bounce?
 							scene.colliders.rigidBody(this.ball.collider)!.applyCentralForce(new Ammo.btVector3(outward[0], 0, outward[2]));
 							this.sound.play(SFX.Bumper);
+							this.score += this.bumperInfos[bumpIx].points;
+							this.scoreSN.value = this.score;
 						}
 					}
 				}
 			}
 			this.bumperMats[bumpIx].tint[2] = isHit;
 		}
+
+		// SCORE UPDATE
+		const curScore = this.scoreSN.value | 0;
+		if (curScore !== this.scoreT0) {
+			this.scoreT0 = curScore;
+			document.getElementById("score")!.textContent = `${curScore}`;
+		}
+
+		// INPUT
 
 		const upImpulse = 44;
 		const upSpeed = 22;
@@ -386,6 +409,8 @@ class MainScene implements sd.SceneDelegate {
 
 		if (ballPos[1] < -2.0) {
 			this.sound.play(SFX.Die);
+			this.deaths += 1;
+			document.getElementById("deaths")!.textContent = `${this.deaths}`;
 			const tx = new Ammo.btTransform();
 			tx.setOrigin(new Ammo.btVector3(-0.26, .014, .03));
 			scene.colliders.rigidBody(this.ball.collider)!.setLinearVelocity(new Ammo.btVector3(0, 0, 0));
