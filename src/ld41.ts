@@ -53,12 +53,11 @@ class MainScene implements sd.SceneDelegate {
 		this.gameState.listen(this);
 
 		this.sound = new Sound(scene.ad, {
-			steps: [
-				cache("audio", "step0"),
-				cache("audio", "step1")
-			],
 			music: cache("audio", "music"),
-			thing: cache("audio", "thing"),
+			launch: cache("audio", "launch"),
+			flipper: cache("audio", "flipper"),
+			bumper: cache("audio", "bumper"),
+			die: cache("audio", "die"),
 		});
 
 		scene.camera.perspective(60, 0.1, 10);
@@ -329,6 +328,7 @@ class MainScene implements sd.SceneDelegate {
 	update(_timeStep: number) {
 		const scene = this.scene;
 		scene.camera.lookAt([0, .86, .15], [0, 0, .40], [0, 0, 1]);
+		vec4.set(scene.rw.mainClearColour, 1, 1, 1, 1); // blarg
 
 		for (let bumpIx = 0; bumpIx < this.bumpers.length; ++bumpIx) {
 			const ghost = scene.colliders.ghostObject(this.bumpers[bumpIx].collider)!;
@@ -354,6 +354,7 @@ class MainScene implements sd.SceneDelegate {
 							vec3.normalize(outward, outward);
 							vec3.scale(outward, outward, 2); // how hard to bounce?
 							scene.colliders.rigidBody(this.ball.collider)!.applyCentralForce(new Ammo.btVector3(outward[0], 0, outward[2]));
+							this.sound.play(SFX.Bumper);
 						}
 					}
 				}
@@ -370,12 +371,14 @@ class MainScene implements sd.SceneDelegate {
 		const downImpulse = 20;
 		const downSpeed = 10;
 		if (control.keyboard.pressed(control.Key.LEFT)) {
+			this.sound.play(SFX.Flipper);
 			this.hingeLeft.enableAngularMotor(true, upSpeed, upImpulse);
 		}
 		else if (control.keyboard.released(control.Key.LEFT)) {
 			this.hingeLeft.enableAngularMotor(true, -downSpeed, downImpulse);
 		}
 		if (control.keyboard.pressed(control.Key.RIGHT)) {
+			this.sound.play(SFX.Flipper);
 			this.hingeRight.enableAngularMotor(true, -upSpeed, upImpulse);
 		}
 		else if (control.keyboard.released(control.Key.RIGHT)) {
