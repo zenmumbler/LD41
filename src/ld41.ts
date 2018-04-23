@@ -362,10 +362,6 @@ class MainScene implements sd.SceneDelegate {
 			this.bumperMats[bumpIx].tint[2] = isHit;
 		}
 
-		if (control.keyboard.pressed(control.Key.SPACE)) {
-			scene.colliders.rigidBody(this.ball.collider)!.applyCentralForce(new Ammo.btVector3(0, 0, 6.5));
-		}
-
 		const upImpulse = 44;
 		const upSpeed = 22;
 		const downImpulse = 20;
@@ -384,6 +380,25 @@ class MainScene implements sd.SceneDelegate {
 		else if (control.keyboard.released(control.Key.RIGHT)) {
 			this.hingeRight.enableAngularMotor(true, downSpeed, downImpulse);
 		}
+
+		// ball position dependent events
+		const ballPos = scene.transforms.localPosition(this.ball.transform);
+
+		if (ballPos[1] < -2.0) {
+			this.sound.play(SFX.Die);
+			const tx = new Ammo.btTransform();
+			tx.setOrigin(new Ammo.btVector3(-0.26, .014, .03));
+			scene.colliders.rigidBody(this.ball.collider)!.setLinearVelocity(new Ammo.btVector3(0, 0, 0));
+			scene.colliders.rigidBody(this.ball.collider)!.setWorldTransform(tx);
+			// scene.transforms.setPosition(this.ball.transform, [-0.26, .014, .03]);
+		}
+		else if (control.keyboard.pressed(control.Key.SPACE)) {
+			if (ballPos[0] < -0.24 && ballPos[2] < .06) {
+				this.sound.play(SFX.Launch);
+				scene.colliders.rigidBody(this.ball.collider)!.applyCentralForce(new Ammo.btVector3(0, 0, 6.5));
+			}
+		}
+
 	}
 }
 
