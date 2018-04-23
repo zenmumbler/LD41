@@ -6,7 +6,7 @@
 	<style>
 		body {
 			margin: 0;
-			background: black;
+			background: white;
 			cursor: default;
 			-webkit-user-select: none;
 			-moz-user-select: none;
@@ -16,14 +16,30 @@
 			font-family: Tahoma, sans-serif;
 		}
 
-		.stageholder {
-			margin: 50px auto 0 auto;
+		.game {
+			width: 1152px;
+			height: 768px;
 			position: relative;
+			margin: 50px auto 0 auto;
+		}
+
+		.stageholder {
+			position: absolute;
+			left: 0;
+			top: 0;
 			overflow: hidden;
 
 			width: 512px;
 			height: 768px;
 			/* border: 1px solid green; */
+		}
+
+		.ui {
+			position: absolute;
+			right: 0;
+			top: 0;
+			width: 640px;
+			height: 768px;
 		}
 
 		#stage {
@@ -75,11 +91,16 @@
 </head>
 
 <body>
-	<div class="stageholder">
-		<div class="overlay loading">
-			<div class="bar">
-				<div class="progress"></div>
+	<div class="game">
+		<div class="stageholder">
+			<div class="overlay loading">
+				<div class="bar">
+					<div class="progress"></div>
+				</div>
 			</div>
+		</div>
+		<div class="ui">
+			<p><img src="data/pincraft.png" alt="PinCraft"></p>
 		</div>
 	</div>
 
