@@ -21,7 +21,6 @@ class MainScene implements sd.SceneDelegate {
 	hingeLeft!: Ammo.btHingeConstraint;
 	hingeRight!: Ammo.btHingeConstraint;
 	paddleRight!: EntityInfo;
-	end = false;
 
 	willLoadAssets() {
 		dom.show(".overlay.loading");
@@ -51,7 +50,6 @@ class MainScene implements sd.SceneDelegate {
 				cache("audio", "step1")
 			],
 			music: cache("audio", "music"),
-			endMusic: cache("audio", "endMusic"),
 			thing: cache("audio", "thing"),
 		});
 

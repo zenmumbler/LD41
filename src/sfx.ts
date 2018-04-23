@@ -11,7 +11,6 @@ const enum Music {
 interface SoundAssets {
 	steps: AudioBuffer[];
 	music: AudioBuffer;
-	endMusic: AudioBuffer;
 	thing: AudioBuffer;
 }
 
@@ -43,10 +42,10 @@ class Sound {
 	}
 
 
-	startMusic(end: boolean) {
+	startMusic() {
 		if (!this.musicSource) {
 			this.musicSource = this.ad.ctx.createBufferSource();
-			this.musicSource.buffer = end ? this.assets_.endMusic : this.assets_.music;
+			this.musicSource.buffer = this.assets_.music;
 			this.musicSource.loop = true;
 			this.musicSource.connect(this.musicGain);
 			this.musicGain.gain.value = 0.60;
