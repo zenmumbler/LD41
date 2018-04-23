@@ -18,6 +18,7 @@ interface EntityCreateOptions {
 	parent?: entity.TransformInstance;
 	transform?: entity.Transform;
 	rigidBody?: physics.RigidBodyDescriptor;
+	ghost?: physics.GhostDescriptor;
 	geom?: geometry.Geometry;
 	renderer?: entity.MeshRendererDescriptor;
 	light?: entity.Light;
@@ -56,7 +57,14 @@ function makeEntity(scene: sd.Scene, options: EntityCreateOptions): EntityInfo {
 	}
 	if (options.rigidBody) {
 		info.collider = scene.colliders.create(entity, {
+			type: sd.entity.ColliderType.RigidBody,
 			rigidBody: options.rigidBody
+		});
+	}
+	else if (options.ghost) {
+		info.collider = scene.colliders.create(entity, {
+			type: sd.entity.ColliderType.GhostObject,
+			ghost: options.ghost
 		});
 	}
 	if (options.light) {
@@ -86,18 +94,4 @@ function makePBRMat(scene: sd.Scene, mat: asset.Material) {
 
 	console.info("PBRMat", data);
 	return data;
-}
-
-interface Interactable {
-	hover(ent: entity.Entity): boolean;
-	blur(ent: entity.Entity): boolean;
-	interact(ent: entity.Entity): boolean;
-}
-
-interface Updateable {
-	update(dt: number): void;
-}
-
-function isUpdateable(u: any): u is Updateable {
-	return ("update" in u) && typeof u.update === "function";
 }
