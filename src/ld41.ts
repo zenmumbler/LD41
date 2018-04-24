@@ -108,12 +108,12 @@ class MainScene implements sd.SceneDelegate {
 					})!
 				},
 				geom: geometry.gen.generate(new geometry.gen.Box({ width: .57, height: .02, depth: .87 })),
-				// renderer: {
-				// 	materials: [makePBRMat(scene, asset.makeStandardMaterial({
-				// 		type: "diffuse",
-				// 		baseColour: [0, .7, 0]
-				// 	}))]
-				// }
+				renderer: {
+					materials: [makePBRMat(scene, asset.makeStandardMaterial({
+						type: "diffuse",
+						baseColour: vec3.scale([], [0.964705, 0.929411, 0.525490], 1.5)
+					}))]
+				}
 			});
 	
 			// ROOF
@@ -160,9 +160,9 @@ class MainScene implements sd.SceneDelegate {
 			renderer: {
 				materials: [makePBRMat(scene, asset.makeStandardMaterial({
 					type: "diffusespecular",
-					baseColour: [1, 0, 0],
+					baseColour: [.5, .5, .8],
 					specularFactor: [1, 1, 1],
-					specularExponent: 8
+					specularExponent: 16
 				}))]
 			}
 		});
@@ -407,7 +407,7 @@ class MainScene implements sd.SceneDelegate {
 		// ball position dependent events
 		const ballPos = scene.transforms.localPosition(this.ball.transform);
 
-		if (ballPos[1] < -2.0) {
+		if (ballPos[1] < -2.0 || control.keyboard.pressed(control.Key.R)) {
 			this.sound.play(SFX.Die);
 			this.deaths += 1;
 			document.getElementById("deaths")!.textContent = `${this.deaths}`;
